@@ -162,13 +162,13 @@ class TrackableUserProxyAgent(UserProxyAgent):
         return super()._process_received_message(message, sender, silent)
     
 
-selected_model = None
-selected_key = None
+selected_model = 'gpt-4o-mini'
+selected_key = api_key
 
-with st.sidebar:
-    st.header("OpenAI Configuration")
-    selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4o-mini'], index=1)
-    selected_key = api_key
+# with st.sidebar:
+#     st.header("OpenAI Configuration")
+#     selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4o-mini'], index=1)
+#     selected_key = api_key
 
 with st.container():
     # for message in st.session_state["messages"]:
