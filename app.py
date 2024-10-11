@@ -171,29 +171,29 @@ with st.container():
             )
             st.session_state.group_chat_manager = group_chat_manager
 
-        # Reference to GroupChatManager
-        manager = st.session_state.group_chat_manager
+            # Reference to GroupChatManager
+            manager = st.session_state.group_chat_manager
 
-        # Append User Message to GroupChat
-        st.session_state.group_chat.messages.append({
-            "sender": "patient",
-            "message": user_input
-        })
+            # Append User Message to GroupChat
+            st.session_state.group_chat.messages.append({
+                "sender": "patient",
+                "message": user_input
+            })
 
-        # Create an Event Loop if not already present
-        try:
-            loop = asyncio.get_running_loop()
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
+            # Create an Event Loop if not already present
+            try:
+                loop = asyncio.get_running_loop()
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
 
-        # Define an Asynchronous Function to Handle Chat
-        async def initiate_group_chat():
-            await manager.initiate_chat(
-            patient,
-            message="How can I help you?",
-        )
+            # Define an Asynchronous Function to Handle Chat
+            async def initiate_group_chat():
+                await manager.initiate_chat(
+                patient,
+                message="How can I help you?",
+            )
 
 
-        # Run the Asynchronous Function
-        loop.run_until_complete(initiate_group_chat())
+            # Run the Asynchronous Function
+            loop.run_until_complete(initiate_group_chat())
