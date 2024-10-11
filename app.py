@@ -22,7 +22,7 @@ selected_key = None
 
 with st.sidebar:
     st.header("OpenAI Configuration")
-    selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4'], index=1)
+    selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4o-mini'], index=1)
     selected_key = st.text_input("API Key", type="password")
 
 with st.container():
@@ -52,7 +52,7 @@ with st.container():
 
         # create a UserProxyAgent instance named "user"
         user_proxy = TrackableUserProxyAgent(
-            name="user", human_input_mode="NEVER", llm_config=llm_config,code_execution_config={"work_dir": "coding", "use_docker": False})
+            name="user", human_input_mode="ALWAYS", llm_config=llm_config,code_execution_config={"work_dir": "coding", "use_docker": False})
 
         # Create an event loop
         loop = asyncio.new_event_loop()
