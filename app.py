@@ -47,7 +47,7 @@ with st.container():
         }
 
         # create an AssistantAgent instance named "assistant"
-        counselor = TrackableUserProxyAgent(
+        counselor = TrackableAssistantAgent(
             name="counselor", system_message="You are an HIV PrEP counselor. Call the function provided to answer user's questions. ", llm_config=llm_config,code_execution_config={"work_dir": "coding", "use_docker": False})
 
         # create a UserProxyAgent instance named "user"
