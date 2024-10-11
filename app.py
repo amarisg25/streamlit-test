@@ -47,12 +47,12 @@ with st.container():
         }
 
         # create an AssistantAgent instance named "assistant"
-        assistant = TrackableAssistantAgent(
-            name="assistant", llm_config=llm_config,code_execution_config={"work_dir": "coding", "use_docker": False})
+        counselor = TrackableUserProxyAgent(
+            name="counselor", system_message="You are an HIV PrEP counselor. Call the function provided to answer user's questions. ", llm_config=llm_config,code_execution_config={"work_dir": "coding", "use_docker": False})
 
         # create a UserProxyAgent instance named "user"
-        user_proxy = TrackableUserProxyAgent(
-            name="user", human_input_mode="ALWAYS", llm_config=llm_config,code_execution_config={"work_dir": "coding", "use_docker": False})
+        patient = TrackableUserProxyAgent(
+            name="patient", human_input_mode="ALWAYS", llm_config=llm_config,code_execution_config={"work_dir": "coding", "use_docker": False})
 
         # Create an event loop
         loop = asyncio.new_event_loop()
@@ -60,8 +60,8 @@ with st.container():
 
 # Define an asynchronous function
         async def initiate_chat():
-            await user_proxy.a_initiate_chat(
-                assistant,
+            await patient.a_initiate_chat(
+                counselor,
                 message=user_input,
             )
 
