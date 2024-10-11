@@ -174,10 +174,10 @@ with st.container():
     #    st.markdown(message)
 
     user_input = st.chat_input("Type something...")
-    selected_model = 'gpt-4o-mini'
-    selected_key = api_key
-
     if user_input:
+        selected_model = 'gpt-4o-mini'
+        selected_key = api_key
+
         if not selected_key or not selected_model:
             st.warning(
                 'You must provide valid OpenAI API key and choose preferred model', icon="⚠️")
