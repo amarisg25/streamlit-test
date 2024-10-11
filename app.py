@@ -22,8 +22,6 @@ load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY')
 st.write("# AutoGen Chat Agents")
 
-
-
 # class TrackableAssistantAgent(AssistantAgent):
 #     def _process_received_message(self, message, sender, silent):
 #         with st.chat_message(sender.name):
@@ -164,12 +162,13 @@ class TrackableUserProxyAgent(UserProxyAgent):
             st.markdown(message)
         return super()._process_received_message(message, sender, silent)
     
+selected_model = None
+selected_key = None
 
-
-# with st.sidebar:
-#     st.header("OpenAI Configuration")
-#     selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4o-mini'], index=1)
-#     selected_key = st.text_input("API Key", type="password")
+with st.sidebar:
+    st.header("OpenAI Configuration")
+    selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4o-mini'], index=1)
+    selected_key = st.text_input("API Key", type="password")
 
 with st.container():
     # for message in st.session_state["messages"]:
@@ -177,14 +176,10 @@ with st.container():
 
     user_input = st.chat_input("Type something...")
     if user_input:
-        OPENAI_API_KEY = api_key
-        selected_model = 'gpt-4o-mini'
-        selected_key = api_key
-
-        # if not selected_key or not selected_model:
-        #     st.warning(
-        #         'You must provide valid OpenAI API key and choose preferred model', icon="⚠️")
-        #     st.stop()
+        if not selected_key or not selected_model:
+            st.warning(
+                'You must provide valid OpenAI API key and choose preferred model', icon="⚠️")
+            st.stop()
 
         llm_config = {
             "timeout": 600,
