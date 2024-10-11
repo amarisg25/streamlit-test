@@ -178,10 +178,10 @@ with st.container():
         selected_model = 'gpt-4o-mini'
         selected_key = api_key
 
-        if not selected_key or not selected_model:
-            st.warning(
-                'You must provide valid OpenAI API key and choose preferred model', icon="⚠️")
-            st.stop()
+        # if not selected_key or not selected_model:
+        #     st.warning(
+        #         'You must provide valid OpenAI API key and choose preferred model', icon="⚠️")
+        #     st.stop()
 
         llm_config = {
             "timeout": 600,
