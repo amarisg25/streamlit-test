@@ -22,6 +22,8 @@ load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY')
 st.write("# AutoGen Chat Agents")
 
+
+
 # class TrackableAssistantAgent(AssistantAgent):
 #     def _process_received_message(self, message, sender, silent):
 #         with st.chat_message(sender.name):
@@ -175,6 +177,7 @@ with st.container():
 
     user_input = st.chat_input("Type something...")
     if user_input:
+        OPENAI_API_KEY = api_key
         selected_model = 'gpt-4o-mini'
         selected_key = api_key
 
