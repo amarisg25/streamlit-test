@@ -176,10 +176,10 @@ with st.container():
 
     user_input = st.chat_input("Type something...")
     if user_input:
-        if not selected_key or not selected_model:
-            st.warning(
-                'You must provide valid OpenAI API key and choose preferred model', icon="⚠️")
-            st.stop()
+        # if not selected_key or not selected_model:
+        #     st.warning(
+        #         'You must provide valid OpenAI API key and choose preferred model', icon="⚠️")
+        #     st.stop()
 
         llm_config = {
             "timeout": 600,
