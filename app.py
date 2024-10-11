@@ -163,8 +163,6 @@ class TrackableUserProxyAgent(UserProxyAgent):
         return super()._process_received_message(message, sender, silent)
     
 
-selected_model = 'gpt-4o-mini'
-selected_key = api_key
 
 # with st.sidebar:
 #     st.header("OpenAI Configuration")
@@ -176,6 +174,9 @@ with st.container():
     #    st.markdown(message)
 
     user_input = st.chat_input("Type something...")
+    selected_model = 'gpt-4o-mini'
+    selected_key = api_key
+
     if user_input:
         if not selected_key or not selected_model:
             st.warning(
