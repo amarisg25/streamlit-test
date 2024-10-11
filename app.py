@@ -1,8 +1,8 @@
 # import streamlit as st
 # import asyncio
 # from autogen import AssistantAgent, UserProxyAgent
-# import os
-# from dotenv import load_dotenv
+import os
+from dotenv import load_dotenv
 # import json
 # from langchain_community.document_loaders import DirectoryLoader, JSONLoader, WebBaseLoader
 # from langchain_openai import OpenAIEmbeddings
@@ -17,9 +17,9 @@
 # import asyncio
 
 
-# load_dotenv()
-# api_key = os.getenv('OPENAI_API_KEY')
-# st.write("# AutoGen Chat Agents")
+load_dotenv()
+api_key = os.getenv('OPENAI_API_KEY')
+st.write("# AutoGen Chat Agents")
 
 # class TrackableAssistantAgent(AssistantAgent):
 #     def _process_received_message(self, message, sender, silent):
@@ -162,13 +162,13 @@ class TrackableUserProxyAgent(UserProxyAgent):
         return super()._process_received_message(message, sender, silent)
     
 
-    selected_model = None
+selected_model = None
 selected_key = None
 
 with st.sidebar:
     st.header("OpenAI Configuration")
     selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4o-mini'], index=1)
-    selected_key = st.text_input("API Key", type="password")
+    selected_key = api_key
 
 with st.container():
     # for message in st.session_state["messages"]:
