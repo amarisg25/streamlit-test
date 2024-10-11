@@ -189,7 +189,11 @@ with st.container():
 
         # Define an Asynchronous Function to Handle Chat
         async def initiate_group_chat():
-            await manager.handle_message("patient", user_input)
+            await manager.initiate_chat(
+            patient,
+            message="How can I help you?",
+        )
+
 
         # Run the Asynchronous Function
         loop.run_until_complete(initiate_group_chat())
