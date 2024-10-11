@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY')
-st.write("# AutoGen Chat Agents")
+
 
 # class TrackableAssistantAgent(AssistantAgent):
 #     def _process_received_message(self, message, sender, silent):
