@@ -5,7 +5,7 @@ import os
 import streamlit as st
 from dotenv import load_dotenv
 import json
-from langchain_community.document_loaders import DirectoryLoader, JSONLoader, WebBaseLoader
+from langchain_community.document_loaders import WebBaseLoader
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_openai import ChatOpenAI
@@ -13,8 +13,6 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain import hub
 import autogen
-from langchain.tools import BaseTool, StructuredTool, Tool, tool
-from autogen.agentchat.contrib.retrieve_user_proxy_agent import RetrieveUserProxyAgent
 import asyncio
 
 
