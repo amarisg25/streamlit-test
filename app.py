@@ -72,8 +72,8 @@ class TrackableGroupChatManager(autogen.GroupChatManager):
     def _process_received_message(self, message, sender, silent):
         if sender.name == "counselor":  
             self.last_response = message
-        with st.chat_message(sender.name):
-                st.markdown(message)
+        # with st.chat_message(sender.name):
+        #         st.markdown(message)
         return super()._process_received_message(message, sender, silent)
     
 
@@ -190,7 +190,7 @@ user_input = st.text_input("You: ", "")
 
 if user_input:
     # Process the message
-    manager._process_received_message(user_input, patient, silent=True)  # Changed to silent=True
+    manager._process_received_message(user_input, patient, silent=True)  
 
     async def initiate_chat():
         await patient.a_initiate_chat(manager, message=user_input, summary_method="reflection_with_llm")
