@@ -204,7 +204,7 @@ with st.sidebar:
     st.header("OpenAI Configuration")
     selected_model = st.selectbox(
         "Model", 
-        ['gpt-3.5-turbo', 'gpt-4', 'ggpt-4o-mini'], 
+        ['gpt-3.5-turbo', 'gpt-4', 'gpt-4o-mini'], 
         index=1,
         key="model_select"  # Optional: Add a unique key
     )
