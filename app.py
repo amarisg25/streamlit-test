@@ -178,7 +178,7 @@ with st.container():
         
         manager.initiate_chat(
             patient,
-            message="How can I help you?",
+            message=user_input,
         )
 
         # Define an asynchronous function
