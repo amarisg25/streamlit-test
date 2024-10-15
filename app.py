@@ -1,3 +1,17 @@
+import logging 
+
+# Setup Logging
+logging.basicConfig(
+    level=logging.INFO,  # Set global logging level to INFO
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    handlers=[
+        logging.StreamHandler()
+    ]
+)
+logging.getLogger("watchdog").setLevel(logging.WARNING)  # Suppress watchdog DEBUG logs
+logging.getLogger("chromadb").setLevel(logging.WARNING)  # Optionally suppress chromadb logs
+
+
 import streamlit as st
 import asyncio
 from autogen import AssistantAgent, UserProxyAgent
@@ -14,19 +28,9 @@ from langchain.memory import ConversationBufferMemory
 from langchain import LLMChain, PromptTemplate
 import autogen
 import chromadb
-import logging  # Import logging
+ # Import logging
 import json
 
-# # Setup Logging
-# logging.basicConfig(
-#     level=logging.INFO,  # Set global logging level to INFO
-#     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-#     handlers=[
-#         logging.StreamHandler()
-#     ]
-# )
-# logging.getLogger("watchdog").setLevel(logging.WARNING)  # Suppress watchdog DEBUG logs
-# logging.getLogger("chromadb").setLevel(logging.WARNING)  # Optionally suppress chromadb logs
 
 # CONFIGURATION
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
