@@ -193,18 +193,31 @@ import autogen
 # CONFIGURATION
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
-# api_key = os.getenv('OPENAI_API_KEY')
+env_api_key = os.getenv('OPENAI_API_KEY')
 
-# if not api_key:
-#     raise ValueError("API key not found. Please set OPENAI_API_KEY in your .env file.")
+# Streamlit Sidebar for Configuration
+with st.sidebar:
+    st.header("OpenAI Configuration")
+    selected_model = st.selectbox(
+        "Model", 
+        ['gpt-3.5-turbo', 'gpt-4', 'gpt-4o-mini'], 
+        index=1,
+        key="model_select"  # Optional: Add a unique key
+    )
+    user_api_key = st.text_input(
+        "API Key", 
+        type="password", 
+        key="api_key_input"  # Optional: Add a unique key
+    )
 
-# Streamlit Sidebar
-st.sidebar.header("Configuration")
-selected_model = st.sidebar.selectbox("Select Model", ["gpt-3.5-turbo", "gpt-4o-mini"])
-user_api_key = st.sidebar.text_input("API Key", type="password")
+# Determine which API key to use
+api_key = user_api_key 
 
+if not api_key:
+    st.warning('Please provide a valid OpenAI API key in the sidebar.', icon="⚠️")
+    st.stop()
 # Function description for LLM
 llm_config = {
     "temperature": 0,
@@ -212,7 +225,7 @@ llm_config = {
     "cache_seed": 43,
     "config_list": [{
         "model": selected_model,
-        "api_key": user_api_key  # Use the API key entered by the user
+        "api_key": api_key  # Use the API key entered by the user
     }]
 }
 
@@ -239,7 +252,7 @@ all_splits = text_splitter.split_documents(data)
 print(f"Number of splits: {len(all_splits)}")
 
 # Store splits in the vector store
-vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbeddings(openai_api_key=user_api_key))
+vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbeddings(openai_api_key=api_key))
 
 # Initialize the LLM with the selected model
 llm = ChatOpenAI(model_name=selected_model, temperature=0)
