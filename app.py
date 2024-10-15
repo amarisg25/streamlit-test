@@ -72,8 +72,8 @@ class TrackableGroupChatManager(autogen.GroupChatManager):
     def _process_received_message(self, message, sender, silent):
         if sender.name == "counselor":  
             self.last_response = message
-        # with st.chat_message(sender.name):
-        #         st.markdown(message)
+        with st.chat_message(sender.name):
+                st.markdown(message)
         return super()._process_received_message(message, sender, silent)
     
 
@@ -179,11 +179,10 @@ if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 
 # Display chat history only once at the start
-if not st.session_state.get('initialized', False):
-    for chat in st.session_state.chat_history:
-        with st.chat_message(chat['role']):
-            st.markdown(chat['content'])
-    st.session_state.initialized = True 
+for chat in st.session_state.chat_history:
+    with st.chat_message(chat['role']):
+        st.markdown(chat['content'])
+
 
 # User input field
 user_input = st.text_input("You: ", "")
