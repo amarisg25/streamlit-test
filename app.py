@@ -144,6 +144,8 @@ with st.container():
             ]
         }
 
+       
+
         # Create an AssistantAgent instance named "counselor"
         counselor = TrackableUserProxyAgent(
             name="counselor", 
@@ -193,7 +195,7 @@ with st.container():
             llm_config=config_list, 
             system_message="When asked a question about HIV/PREP, always call the FAQ agent before to help the counselor answer. Then have the counselor answer the question concisely using the retrieved information."
         )
-
+        manager.process_message(user_input, patient)
         # Define an asynchronous function
         async def initiate_chat():
             await patient.a_initiate_chat(
