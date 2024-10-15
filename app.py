@@ -146,7 +146,7 @@ teachability = Teachability(
     reset_db=False,  # Use True to force-reset the memo DB, and False to use an existing DB.
     path_to_db_dir="./tmp/interactive/teachability_db"  # Can be any path, but teachable agents in a group chat require unique paths.
 )
-teachability.add_to_agent(counselor)
+
 
 
 
@@ -164,6 +164,9 @@ manager = TrackableGroupChatManager(
     llm_config=llm_config,
     system_message="When asked a question about HIV/PREP, always call the FAQ agent before to help the counselor answer. Then have the counselor answer the question concisely using the retrieved information."
 )
+
+teachability.add_to_agent(counselor)
+teachability.add_to_agent(manager)
 
 # Streamlit user input for chatbot interaction
 st.title("HIV PrEP Counseling Chatbot")
