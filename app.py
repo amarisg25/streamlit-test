@@ -19,7 +19,6 @@ import asyncio
 load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY')
 
-
 class TrackableAssistantAgent(AssistantAgent):
     def _process_received_message(self, message, sender, silent):
         with st.chat_message(sender.name):
@@ -37,10 +36,10 @@ class TrackableUserProxyAgent(UserProxyAgent):
 selected_model = None
 selected_key = None
 
-with st.sidebar:
-    st.header("OpenAI Configuration")
-    selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4o-mini'], index=1)
-    selected_key = st.text_input("API Key", type="password")
+# with st.sidebar:
+#     st.header("OpenAI Configuration")
+#     selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4o-mini'], index=1)
+#     selected_key = st.text_input("API Key", type="password")
 
 
 #  Load documents from a URL
@@ -57,7 +56,8 @@ print(f"Number of splits: {len(all_splits)}")
 #     print(f"Split Document {i}: {split}")
 #
 # Store splits in the vector store
-vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbeddings(openai_api_key=api_key))
+print(api_key)
+vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbeddings(api_key=api_key))
 
 # Initialize the LLM with the correct model
 llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
@@ -96,8 +96,8 @@ with st.container():
             "timeout": 600,
             "config_list": [
                 {
-                    "model": selected_model,
-                    "api_key": selected_key
+                    "model": 'gpt-4o-mini',
+                    "api_key": api_key
                 }
             ]
         }
