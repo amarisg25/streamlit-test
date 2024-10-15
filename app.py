@@ -27,12 +27,12 @@ from langchain import hub
 from langchain.memory import ConversationBufferMemory
 from langchain import LLMChain, PromptTemplate
 import autogen
-import chromadb
  # Import logging
 import json
 __import__('pysqlite3')
 import sys
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+import chromadb
 
 
 # CONFIGURATION
