@@ -86,33 +86,38 @@ def check_termination(x):
     """
     return x.get("content", "").rstrip().endswith("TERMINATE")
 
+# class TrackableGroupChatManager(autogen.GroupChatManager):
+#     def _process_received_message(self, message, sender, silent):
+#         # Ensure message is a string
+#         if isinstance(message, dict) and 'content' in message:
+#             message_content = message['content']
+#         elif isinstance(message, str):
+#             message_content = message
+#         else:
+#             message_content = str(message)
+        
+#         # Append the message to Streamlit chat history
+#         st.session_state.chat_history.append({"role": sender.name, "content": message_content})
+        
+#         # Also append to LangChain memory
+#         if sender.name == "user":
+#             memory.chat_memory.add_user_message(message_content)
+#         else:
+#             memory.chat_memory.add_ai_message(message_content)
+        
+#         # Display the message in Streamlit
+#         with st.chat_message(sender.name):
+#             st.markdown(message_content)
+        
+#         # Log the current chat history for debugging
+#         logging.debug(f"Chat History: {json.dumps(st.session_state.chat_history, indent=2)}")
+        
+#         return super()._process_received_message(message_content, sender, silent)
 class TrackableGroupChatManager(autogen.GroupChatManager):
     def _process_received_message(self, message, sender, silent):
-        # Ensure message is a string
-        if isinstance(message, dict) and 'content' in message:
-            message_content = message['content']
-        elif isinstance(message, str):
-            message_content = message
-        else:
-            message_content = str(message)
-        
-        # Append the message to Streamlit chat history
-        st.session_state.chat_history.append({"role": sender.name, "content": message_content})
-        
-        # Also append to LangChain memory
-        if sender.name == "user":
-            memory.chat_memory.add_user_message(message_content)
-        else:
-            memory.chat_memory.add_ai_message(message_content)
-        
-        # Display the message in Streamlit
         with st.chat_message(sender.name):
-            st.markdown(message_content)
-        
-        # Log the current chat history for debugging
-        logging.debug(f"Chat History: {json.dumps(st.session_state.chat_history, indent=2)}")
-        
-        return super()._process_received_message(message_content, sender, silent)
+                st.markdown(message)
+        return super()._process_received_message(message, sender, silent)
 
 # Load documents from a URL
 loader = WebBaseLoader("https://github.com/amarisg25/counselling-chatbot/blob/main/FastAPI/embeddings/HIV_PrEP_knowledge_embedding.json")
