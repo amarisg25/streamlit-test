@@ -11,7 +11,9 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain import hub
 import autogen
-
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 # Load environment variables
 load_dotenv()
 env_api_key = os.getenv('OPENAI_API_KEY')
