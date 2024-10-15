@@ -70,9 +70,15 @@ def check_termination(x):
 
 class TrackableGroupChatManager(autogen.GroupChatManager):
     def _process_received_message(self, message, sender, silent):
+        if sender.name == "counselor":  
+            self.last_response = message
         with st.chat_message(sender.name):
                 st.markdown(message)
         return super()._process_received_message(message, sender, silent)
+    
+
+    def get_last_assistant_response(self):
+        return self.last_response
 
 # Load documents from a URL
 loader = WebBaseLoader("https://github.com/amarisg25/counselling-chatbot/blob/main/FastAPI/embeddings/HIV_PrEP_knowledge_embedding.json")
@@ -192,7 +198,11 @@ if user_input:
     # Call the function to initiate chat
     loop.run_until_complete(initiate_chat())
     # Append user input to chat history
+    last_response = manager.get_last_assistant_response()
     st.session_state.chat_history.append({"role": "user", "content": user_input})
+    if last_response:
+        st.session_state.chat_history.append({"role": "assistant", "content": last_response})
+
 
 
     # Display the updated chat history
