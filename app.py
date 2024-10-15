@@ -175,16 +175,11 @@ with st.container():
         
         manager = autogen.GroupChatManager(groupchat=group_chat, llm_config=config_list, system_message="When asked a question about HIV/PREP, always call the FAQ agent before to help the counselor answer. Then have the counselor answer the question concisely using the retrieved information.")
 
-        
-        patient.initiate_chat(
-            manager,
-            message=user_input,
-        )
 
         # Define an asynchronous function
         async def initiate_chat():
-            await manager.a_initiate_chat(
-                patient,
+            await patient.a_initiate_chat(
+                manager,
                 message=user_input,
             )
 
