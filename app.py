@@ -258,7 +258,7 @@ print(f"Number of splits: {len(all_splits)}")
 vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbeddings(openai_api_key=api_key))
 
 # Initialize the LLM with the selected model
-llm = ChatOpenAI(model_name=selected_model, temperature=0)
+llm = ChatOpenAI(model_name=selected_model, temperature=0, openai_api_key=api_key)
 
 # Patient (Chatbot-user)
 patient = autogen.UserProxyAgent(
