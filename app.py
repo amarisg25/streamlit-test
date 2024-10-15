@@ -62,7 +62,6 @@ def initialize_vectorstore(api_key):
     # Split documents into manageable chunks
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     all_splits = text_splitter.split_documents(data)
-    st.write(f"Number of splits: {len(all_splits)}")
     
     print(api_key)
     # Initialize the vector store
@@ -107,6 +106,22 @@ class TrackableUserProxyAgent(UserProxyAgent):
         with st.chat_message(sender.name):
             st.markdown(message)
         return super()._process_received_message(message, sender, silent)
+
+class TrackableGroupChatManager(autogen.GroupChatManager):
+    def __init__(self, groupchat, llm_config, system_message):
+        super().__init__(groupchat=groupchat, llm_config=llm_config, system_message=system_message)
+        self.messages = []  # To track all messages in the group chat
+
+    def process_message(self, message, sender):
+        # Track the message for display
+        self.messages.append((sender.name, message))
+
+        # Display the message in the Streamlit app
+        with st.chat_message(sender.name):
+            st.markdown(message)
+
+        # Process the message using the parent class method
+        super().process_message(message, sender)
 
 # Streamlit Container for Chat
 with st.container():
@@ -173,8 +188,11 @@ with st.container():
             messages=[], 
             )
         
-        manager = autogen.GroupChatManager(groupchat=group_chat, llm_config=config_list, system_message="When asked a question about HIV/PREP, always call the FAQ agent before to help the counselor answer. Then have the counselor answer the question concisely using the retrieved information.")
-
+        manager = TrackableGroupChatManager(
+            groupchat=group_chat, 
+            llm_config=config_list, 
+            system_message="When asked a question about HIV/PREP, always call the FAQ agent before to help the counselor answer. Then have the counselor answer the question concisely using the retrieved information."
+        )
 
         # Define an asynchronous function
         async def initiate_chat():
