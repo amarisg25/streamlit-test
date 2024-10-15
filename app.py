@@ -509,6 +509,7 @@ for chat in st.session_state.chat_history:
         st.markdown(chat['content'])
 
 # User input field
+# User input field
 user_input = st.text_input("You: ", "")
 
 if user_input:
@@ -526,9 +527,14 @@ if user_input:
         except Exception as e:
             logging.error(f"Error initiating chat: {e}")
             st.session_state.chat_history.append({"role": "error", "content": "An error occurred while processing your request."})
-    
-    # Schedule the coroutine as a task
-    asyncio.create_task(initiate_chat())
+
+    # Directly calling the async function using Streamlit's `async` context
+    if 'loop' in st.session_state:
+        loop = st.session_state.loop
+        loop.run_until_complete(initiate_chat())
+    else:
+        asyncio.run(initiate_chat())  # Use this only if 'loop' is not in session state
+
     
     # Display the updated chat history
     for chat in st.session_state.chat_history:
