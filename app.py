@@ -91,7 +91,7 @@ llm = ChatOpenAI(model_name=selected_model, temperature=0, openai_api_key=api_ke
 # Patient (Chatbot-user)
 patient = autogen.UserProxyAgent(
     name="patient",
-    human_input_mode="ALWAYS",
+    human_input_mode="NEVER",
     max_consecutive_auto_reply=10,
     code_execution_config={"work_dir": "coding", "use_docker": False},
     llm_config=llm_config
