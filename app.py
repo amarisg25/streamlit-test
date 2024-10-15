@@ -189,6 +189,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain import hub
 import autogen
+import chromadb
 
 # CONFIGURATION
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -197,6 +198,8 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 load_dotenv()
 env_api_key = os.getenv('OPENAI_API_KEY')
 
+
+chromadb.api.client.SharedSystemClient.clear_system_cache()
 # Streamlit Sidebar for Configuration
 with st.sidebar:
     st.header("OpenAI Configuration")
