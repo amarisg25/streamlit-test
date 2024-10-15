@@ -108,17 +108,23 @@ class TrackableUserProxyAgent(UserProxyAgent):
         return super()._process_received_message(message, sender, silent)
 
 class TrackableGroupChatManager(autogen.GroupChatManager):
-    def _process_received_message(self, message, sender, silent):
-        # Log received message
-        print(f"Received message from {sender.name}: {message}")
+    def __init__(self, groupchat, llm_config, system_message):
+        # Call the parent class's __init__ method
+        super().__init__(groupchat=groupchat, llm_config=llm_config, system_message=system_message)
+        
+        # No need to create a custom messages list if not required
+        # self.messages = []  # Remove this line
 
-        # Your existing code...
-        self.messages.append((sender.name, message))
+    def _process_received_message(self, message, sender, silent):
+        # Optionally, log the message to Streamlit (or any other logging)
         with st.chat_message(sender.name):
             st.markdown(message)
-        
-        # Call the parent class's method
+
+        # Let the parent class handle the message processing
         return super()._process_received_message(message, sender, silent)
+
+# ... Rest of your code
+
 
 
 # Streamlit Container for Chat
