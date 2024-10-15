@@ -13,6 +13,9 @@ from autogen.agentchat.contrib.capabilities.teachability import Teachability
 from langchain import hub
 import autogen
 import chromadb
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 # CONFIGURATION
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
