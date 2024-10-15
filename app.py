@@ -339,7 +339,7 @@ with st.container():
 
         async def initiate_chat():
             await patient.a_initiate_chat(
-                FAQ_agent,
+                manager,
                 message=user_input,
             )
 
