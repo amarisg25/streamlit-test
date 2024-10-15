@@ -81,7 +81,6 @@ data = loader.load()
 # Split documents into manageable chunks
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 all_splits = text_splitter.split_documents(data)
-print(f"Number of splits: {len(all_splits)}")
 
 # Store splits in the vector store
 vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbeddings(openai_api_key=api_key))
