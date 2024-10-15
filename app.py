@@ -9,6 +9,7 @@ from langchain_community.vectorstores import Chroma
 from langchain_openai import ChatOpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
+from autogen.agentchat.contrib.capabilities.teachability import Teachability
 from langchain import hub
 import autogen
 import chromadb
@@ -140,6 +141,13 @@ autogen.agentchat.register_function(
     name="answer_question",
     description="Retrieves embedding data content to answer user's question.",
 )
+
+teachability = Teachability(
+    reset_db=False,  # Use True to force-reset the memo DB, and False to use an existing DB.
+    path_to_db_dir="./tmp/interactive/teachability_db"  # Can be any path, but teachable agents in a group chat require unique paths.
+)
+teachability.add_to_agent(counselor)
+
 
 
 loop = asyncio.new_event_loop()
