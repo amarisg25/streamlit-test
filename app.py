@@ -178,16 +178,17 @@ st.title("HIV PrEP Counseling Chatbot")
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 
-# Display chat history
-for chat in st.session_state.chat_history:
-    with st.chat_message(chat['role']):
-        st.markdown(chat['content'])
+# Display chat history only once at the start
+if not st.session_state.get('initialized', False):
+    for chat in st.session_state.chat_history:
+        with st.chat_message(chat['role']):
+            st.markdown(chat['content'])
+    st.session_state.initialized = True  # Mark as initialized to avoid re-rendering
 
 # User input field
 user_input = st.text_input("You: ", "")
 
 if user_input:
-
     # Process the message
     manager._process_received_message(user_input, patient, silent=False)
 
@@ -197,15 +198,19 @@ if user_input:
 
     # Call the function to initiate chat
     loop.run_until_complete(initiate_chat())
+
     # Append user input to chat history
     last_response = manager.get_last_assistant_response()
     st.session_state.chat_history.append({"role": "user", "content": user_input})
+    
     if last_response:
         st.session_state.chat_history.append({"role": "assistant", "content": last_response})
 
+    # Display the new message
+    with st.chat_message("user"):
+        st.markdown(user_input)
+        
+    if last_response:
+        with st.chat_message("assistant"):
+            st.markdown(last_response)
 
-
-    # Display the updated chat history
-    for chat in st.session_state.chat_history:
-        with st.chat_message(chat['role']):
-            st.markdown(chat['content'])
