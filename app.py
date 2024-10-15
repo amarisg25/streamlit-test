@@ -190,7 +190,7 @@ user_input = st.text_input("You: ", "")
 
 if user_input:
     # Process the message
-    manager._process_received_message(user_input, patient, silent=False)
+    manager._process_received_message(user_input, patient, silent=True)  # Changed to silent=True
 
     async def initiate_chat():
         await patient.a_initiate_chat(manager, message=user_input, summary_method="reflection_with_llm")
@@ -206,7 +206,7 @@ if user_input:
     if last_response:
         st.session_state.chat_history.append({"role": "assistant", "content": last_response})
 
-    # Display the new message
+    # Display only the new messages
     with st.chat_message("user"):
         st.markdown(user_input)
 
