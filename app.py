@@ -42,6 +42,10 @@ with st.sidebar:
 # Determine which API key to use
 api_key = user_api_key 
 # if user_api_key else env_api_key
+config_list = {
+    "model": "gpt-4o-mini", 
+    "api_key": api_key 
+}
 
 if not api_key:
     st.warning('Please provide a valid OpenAI API key in the sidebar.', icon="⚠️")
@@ -160,10 +164,25 @@ with st.container():
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
 
+        agents = [counselor, FAQ_agent, patient]
+
+        group_chat = autogen.GroupChat(
+            agents= agents, 
+            messages=[], 
+            )
+        
+        manager = autogen.GroupChatManager(groupchat=group_chat, llm_config=config_list, system_message="When asked a question about HIV/PREP, always call the FAQ agent before to help the counselor answer. Then have the counselor answer the question concisely using the retrieved information.")
+
+        
+        manager.initiate_chat(
+            patient,
+            message="How can I help you?",
+        )
+
         # Define an asynchronous function
         async def initiate_chat():
-            await patient.a_initiate_chat(
-                counselor,
+            await manager.a_initiate_chat(
+                patient,
                 message=user_input,
             )
 
