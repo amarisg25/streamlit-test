@@ -17,6 +17,11 @@ import asyncio
 from autogen import AssistantAgent, UserProxyAgent
 import os
 from dotenv import load_dotenv
+import streamlit as st
+import asyncio
+from autogen import AssistantAgent, UserProxyAgent
+import os
+from dotenv import load_dotenv
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
@@ -25,24 +30,18 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain import hub
 from langchain.memory import ConversationBufferMemory
-from langchain import LLMChain, PromptTemplate
 import autogen
- # Import logging
-import json
 __import__('pysqlite3')
 import sys
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 import chromadb
 
-
-# CONFIGURATION
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
+chromadb.api.client.SharedSystemClient.clear_system_cache()
 
 # Load environment variables
 load_dotenv()
 env_api_key = os.getenv('OPENAI_API_KEY')
 
-chromadb.api.client.SharedSystemClient.clear_system_cache()
 
 # Streamlit Sidebar for Configuration
 with st.sidebar:
@@ -142,19 +141,10 @@ vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbedd
 llm = ChatOpenAI(model_name=selected_model, temperature=0, openai_api_key=api_key)
 
 # Define a prompt template that includes conversation history
-prompt = PromptTemplate(
-    template="""
-    The following is a conversation between a patient and an HIV PrEP counselor. Use the conversation history to provide relevant and context-aware responses.
-
-    {chat_history}
-
-    Patient: {question}
-    Counselor:""",
-    input_variables=["chat_history", "question"]
-)
+prompt = hub.pull("rlm/rag-prompt", api_url="https://api.hub.langchain.com")
 
 # Initialize the LLMChain with the memory
-llm_chain = LLMChain(llm=llm, prompt=prompt, memory=memory)
+llm_chain = ChatOpenAI(llm=llm, prompt=prompt, memory=memory)
 
 # Patient (Chatbot-user)
 patient = autogen.UserProxyAgent(
