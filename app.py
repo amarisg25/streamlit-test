@@ -21,7 +21,7 @@ load_dotenv()
 env_api_key = os.getenv('OPENAI_API_KEY')
 
 
-chromadb.api.client.SharedSystemClient.clear_system_cache()
+# chromadb.api.client.SharedSystemClient.clear_system_cache()
 # Streamlit Sidebar for Configuration
 with st.sidebar:
     st.header("OpenAI Configuration")
