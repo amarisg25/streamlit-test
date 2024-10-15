@@ -195,7 +195,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 # Load environment variables from .env file
 load_dotenv()
-api_key = os.getenv('OPENAI_API_KEY')
+# api_key = os.getenv('OPENAI_API_KEY')
 
 # if not api_key:
 #     raise ValueError("API key not found. Please set OPENAI_API_KEY in your .env file.")
@@ -203,7 +203,7 @@ api_key = os.getenv('OPENAI_API_KEY')
 # Streamlit Sidebar
 st.sidebar.header("Configuration")
 selected_model = st.sidebar.selectbox("Select Model", ["gpt-3.5-turbo", "gpt-4o-mini"])
-user_api_key = st.sidebar.text_input("API Key", value=api_key, type="password")
+user_api_key = st.sidebar.text_input("API Key", type="password")
 
 # Function description for LLM
 llm_config = {
