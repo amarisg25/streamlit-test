@@ -183,7 +183,7 @@ if not st.session_state.get('initialized', False):
     for chat in st.session_state.chat_history:
         with st.chat_message(chat['role']):
             st.markdown(chat['content'])
-    st.session_state.initialized = True  # Mark as initialized to avoid re-rendering
+    st.session_state.initialized = True 
 
 # User input field
 user_input = st.text_input("You: ", "")
@@ -192,15 +192,15 @@ if user_input:
     # Process the message
     manager._process_received_message(user_input, patient, silent=False)
 
-    # Async chat initiation
     async def initiate_chat():
         await patient.a_initiate_chat(manager, message=user_input, summary_method="reflection_with_llm")
 
     # Call the function to initiate chat
     loop.run_until_complete(initiate_chat())
 
-    # Append user input to chat history
     last_response = manager.get_last_assistant_response()
+
+    # Append user input to chat history
     st.session_state.chat_history.append({"role": "user", "content": user_input})
     
     if last_response:
@@ -209,8 +209,11 @@ if user_input:
     # Display the new message
     with st.chat_message("user"):
         st.markdown(user_input)
-        
+
     if last_response:
         with st.chat_message("assistant"):
             st.markdown(last_response)
+
+    # Debugging: Log current chat history
+    st.write("Current chat history:", st.session_state.chat_history)
 
