@@ -17,16 +17,16 @@ import chromadb
 import logging  # Import logging
 import json
 
-# Setup Logging
-logging.basicConfig(
-    level=logging.INFO,  # Set global logging level to INFO
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-    handlers=[
-        logging.StreamHandler()
-    ]
-)
-logging.getLogger("watchdog").setLevel(logging.WARNING)  # Suppress watchdog DEBUG logs
-logging.getLogger("chromadb").setLevel(logging.WARNING)  # Optionally suppress chromadb logs
+# # Setup Logging
+# logging.basicConfig(
+#     level=logging.INFO,  # Set global logging level to INFO
+#     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+#     handlers=[
+#         logging.StreamHandler()
+#     ]
+# )
+# logging.getLogger("watchdog").setLevel(logging.WARNING)  # Suppress watchdog DEBUG logs
+# logging.getLogger("chromadb").setLevel(logging.WARNING)  # Optionally suppress chromadb logs
 
 # CONFIGURATION
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
