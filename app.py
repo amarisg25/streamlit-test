@@ -41,15 +41,17 @@ with st.sidebar:
 
 # Determine which API key to use
 api_key = user_api_key 
+
+
+if not api_key:
+    st.warning('Please provide a valid OpenAI API key in the sidebar.', icon="⚠️")
+    st.stop()
+
 # if user_api_key else env_api_key
 config_list = {
     "model": "gpt-4o-mini", 
     "api_key": api_key 
 }
-
-if not api_key:
-    st.warning('Please provide a valid OpenAI API key in the sidebar.', icon="⚠️")
-    st.stop()
 
 @st.cache_resource
 def initialize_vectorstore(api_key):
