@@ -176,8 +176,8 @@ with st.container():
         manager = autogen.GroupChatManager(groupchat=group_chat, llm_config=config_list, system_message="When asked a question about HIV/PREP, always call the FAQ agent before to help the counselor answer. Then have the counselor answer the question concisely using the retrieved information.")
 
         
-        manager.initiate_chat(
-            patient,
+        patient.initiate_chat(
+            manager,
             message=user_input,
         )
 
