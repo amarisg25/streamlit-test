@@ -246,7 +246,7 @@ def check_termination(x):
     return x.get("content", "").rstrip().endswith("TERMINATE")
 
 # Load documents from a URL
-loader = WebBaseLoader("https://github.com/amarisg25/counselling-chatbot/blob/main/embeddings/HIV_PrEP_knowledge_embedding.json")
+loader = WebBaseLoader("https://github.com/amarisg25/counselling-chatbot/blob/main/FastAPI/embeddings/HIV_PrEP_knowledge_embedding.json")
 data = loader.load()
 
 # Split documents into manageable chunks
