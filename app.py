@@ -11,7 +11,6 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain import hub
 import autogen
-import pysqlite3 as sqlite3
 
 # Load environment variables
 load_dotenv()
