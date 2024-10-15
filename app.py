@@ -179,7 +179,7 @@ with st.container():
         # Define an asynchronous function
         async def initiate_chat():
             await patient.a_initiate_chat(
-                manager,
+                FAQ_agent,
                 message=user_input,
             )
 
