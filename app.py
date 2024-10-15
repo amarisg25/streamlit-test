@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import json
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_openai import OpenAIEmbeddings
+import langchain_openai
 from langchain_community.vectorstores import Chroma
 from langchain_openai import ChatOpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -57,7 +58,7 @@ print(f"Number of splits: {len(all_splits)}")
 #
 # Store splits in the vector store
 print(api_key)
-vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbeddings(api_key=api_key))
+vectorstore = Chroma.from_documents(documents=all_splits, embedding=langchain_openai.embeddings.base.OpenAIEmbeddings(openai_api_key=api_key))
 
 # Initialize the LLM with the correct model
 llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
