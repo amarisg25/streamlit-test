@@ -11,6 +11,10 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain import hub
 import autogen
+import sys
+__import__('pysqlite3')
+import pysqlite3
+sys.modules['sqlite3'] = sys.modules["pysqlite3"]
 import chromadb
 
 # CONFIGURATION
