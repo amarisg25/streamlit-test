@@ -172,10 +172,16 @@ st.title("HIV PrEP Counseling Chatbot")
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 
-# Display chat history
-for chat in st.session_state.chat_history:
-    with st.chat_message(chat['role']):
-        st.markdown(chat['content'])
+# # Display chat history
+# for chat in st.session_state.chat_history:
+#     with st.chat_message(chat['role']):
+#         st.markdown(chat['content'])
+
+# Display only the last message in chat history
+if st.session_state.chat_history:
+    last_chat = st.session_state.chat_history[-1]  # Get the last chat message
+    with st.chat_message(last_chat['role']):
+        st.markdown(last_chat['content'])
 
 # User input field
 user_input = st.text_input("You: ", "")
@@ -189,7 +195,7 @@ if user_input:
 
     # Async chat initiation
     async def initiate_chat():
-        await patient.a_initiate_chat(manager, message=user_input, summary_method="reflection_with_llm", max_turns=2)
+        await patient.a_initiate_chat(manager, message=user_input, summary_method="reflection_with_llm")
 
     # Call the function to initiate chat
     loop.run_until_complete(initiate_chat())
