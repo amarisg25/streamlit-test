@@ -205,10 +205,29 @@ class TrackableUserProxyAgent(UserProxyAgent):
 selected_model = None
 selected_key = None
 
-# with st.sidebar:
-#     st.header("OpenAI Configuration")
-#     selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4o-mini'], index=1)
-#     selected_key = st.text_input("API Key", type="password")
+# Streamlit Sidebar for Configuration
+with st.sidebar:
+    st.header("OpenAI Configuration")
+    selected_model = st.selectbox(
+        "Model", 
+        ['gpt-3.5-turbo', 'gpt-4', 'gpt-4o-mini'], 
+        index=1,
+        key="model_select"  # Optional: Add a unique key
+    )
+    user_api_key = st.text_input(
+        "API Key", 
+        type="password", 
+        # value=env_api_key if env_api_key else "",
+        key="api_key_input"  # Optional: Add a unique key
+    )
+
+# Determine which API key to use
+api_key = user_api_key 
+# if user_api_key else env_api_key
+
+if not api_key:
+    st.warning('Please provide a valid OpenAI API key in the sidebar.', icon="⚠️")
+    st.stop()
 
 
 #  Load documents from a URL
