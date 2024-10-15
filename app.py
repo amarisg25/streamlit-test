@@ -11,10 +11,6 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain import hub
 import autogen
-import sys
-__import__('pysqlite3')
-import pysqlite3
-sys.modules['sqlite3'] = sys.modules["pysqlite3"]
 import chromadb
 
 # CONFIGURATION
@@ -25,7 +21,7 @@ load_dotenv()
 env_api_key = os.getenv('OPENAI_API_KEY')
 
 
-# chromadb.api.client.SharedSystemClient.clear_system_cache()
+chromadb.api.client.SharedSystemClient.clear_system_cache()
 # Streamlit Sidebar for Configuration
 with st.sidebar:
     st.header("OpenAI Configuration")
