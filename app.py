@@ -15,9 +15,22 @@ from langchain import hub
 import autogen
 import asyncio
 
-
+# Load environment variables
 load_dotenv()
-api_key = os.getenv('OPENAI_API_KEY')
+env_api_key = os.getenv('OPENAI_API_KEY')
+
+# Streamlit Sidebar for Configuration
+with st.sidebar:
+    st.header("OpenAI Configuration")
+    selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4o-mini'], index=1)
+    user_api_key = st.text_input("API Key", type="password", value=env_api_key if env_api_key else "")
+
+# Determine which API key to use
+api_key = user_api_key if user_api_key else env_api_key
+
+if not api_key:
+    st.warning('Please provide a valid OpenAI API key in the sidebar.', icon="⚠️")
+    st.stop()
 
 class TrackableAssistantAgent(AssistantAgent):
     def _process_received_message(self, message, sender, silent):
@@ -56,7 +69,7 @@ print(f"Number of splits: {len(all_splits)}")
 #
 # Store splits in the vector store
 print(api_key)
-vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbeddings(model="text-embedding-3-large", api_key=selected_key))
+vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbeddings(model="text-embedding-3-large", api_key=api_key))
 
 # Initialize the LLM with the correct model
 llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
