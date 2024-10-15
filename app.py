@@ -121,7 +121,7 @@ class TrackableGroupChatManager(autogen.GroupChatManager):
             st.markdown(message)
 
         # Process the message using the parent class method
-        super().process_message(message, sender)
+        super()._process_received_message(message, sender)
 
 # Streamlit Container for Chat
 with st.container():
