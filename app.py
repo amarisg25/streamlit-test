@@ -165,7 +165,7 @@ manager = TrackableGroupChatManager(
 )
 
 teachability.add_to_agent(counselor)
-teachability.add_to_agent(manager)
+# teachability.add_to_agent(manager)
 
 # Streamlit user input for chatbot interaction
 st.title("HIV PrEP Counseling Chatbot")
