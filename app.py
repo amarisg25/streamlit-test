@@ -245,6 +245,12 @@ def check_termination(x):
     """
     return x.get("content", "").rstrip().endswith("TERMINATE")
 
+class TrackableGroupChatManager(autogen.GroupChatManager):
+    def _process_received_message(self, message, sender, silent):
+        with st.chat_message(sender.name):
+                st.markdown(message)
+        return super()._process_received_message(message, sender, silent)
+
 # Load documents from a URL
 loader = WebBaseLoader("https://github.com/amarisg25/counselling-chatbot/blob/main/FastAPI/embeddings/HIV_PrEP_knowledge_embedding.json")
 data = loader.load()
@@ -323,7 +329,7 @@ group_chat = autogen.GroupChat(
     messages=[],
 )
 
-manager = autogen.GroupChatManager(
+manager = TrackableGroupChatManager(
     groupchat=group_chat,
     llm_config=llm_config,
     system_message="When asked a question about HIV/PREP, always call the FAQ agent before to help the counselor answer. Then have the counselor answer the question concisely using the retrieved information."
