@@ -17,8 +17,7 @@ __import__('pysqlite3')
 import sys
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
-# CONFIGURATION
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 
 # Load environment variables
 load_dotenv()
