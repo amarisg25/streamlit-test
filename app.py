@@ -14,6 +14,11 @@ from langchain.memory import ConversationBufferMemory
 from langchain import LLMChain, PromptTemplate
 import autogen
 import chromadb
+import logging
+import json
+
+# Setup Logging
+logging.basicConfig(level=logging.DEBUG)
 
 # CONFIGURATION
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -75,20 +80,31 @@ def check_termination(x):
 
 class TrackableGroupChatManager(autogen.GroupChatManager):
     def _process_received_message(self, message, sender, silent):
+        # Ensure message is a string
+        if isinstance(message, dict) and 'content' in message:
+            message_content = message['content']
+        elif isinstance(message, str):
+            message_content = message
+        else:
+            message_content = str(message)
+        
         # Append the message to Streamlit chat history
-        st.session_state.chat_history.append({"role": sender.name, "content": message})
+        st.session_state.chat_history.append({"role": sender.name, "content": message_content})
         
         # Also append to LangChain memory
         if sender.name == "user":
-            memory.chat_memory.add_user_message(message)
+            memory.chat_memory.add_user_message(message_content)
         else:
-            memory.chat_memory.add_ai_message(message)
+            memory.chat_memory.add_ai_message(message_content)
         
         # Display the message in Streamlit
         with st.chat_message(sender.name):
-            st.markdown(message)
+            st.markdown(message_content)
         
-        return super()._process_received_message(message, sender, silent)
+        # Log the current chat history for debugging
+        logging.debug(f"Chat History: {json.dumps(st.session_state.chat_history, indent=2)}")
+        
+        return super()._process_received_message(message_content, sender, silent)
 
 # Load documents from a URL
 loader = WebBaseLoader("https://github.com/amarisg25/counselling-chatbot/blob/main/FastAPI/embeddings/HIV_PrEP_knowledge_embedding.json")
@@ -97,7 +113,7 @@ data = loader.load()
 # Split documents into manageable chunks
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 all_splits = text_splitter.split_documents(data)
-print(f"Number of splits: {len(all_splits)}")
+logging.debug(f"Number of splits: {len(all_splits)}")
 
 # Store splits in the vector store
 vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbeddings(openai_api_key=api_key))
@@ -143,7 +159,11 @@ def answer_question(question: str) -> str:
     :return: The answer as a string.
     """
     response = llm_chain.run(question=question)
-    return response
+    logging.debug(f"Answer Question Response: {response} (type: {type(response)})")
+    if isinstance(response, str):
+        return response
+    else:
+        return "I'm sorry, I couldn't process your request."
 
 # Main counselor - answers general questions 
 counselor = autogen.UserProxyAgent(
@@ -165,6 +185,7 @@ FAQ_agent = autogen.AssistantAgent(
     llm_config=llm_config
 )
 
+# Register the answer_question function with autogen
 autogen.agentchat.register_function(
     answer_question,
     caller=FAQ_agent,
@@ -210,13 +231,18 @@ user_input = st.text_input("You: ", "")
 if user_input:
     # Append user input to chat history
     st.session_state.chat_history.append({"role": "user", "content": user_input})
+    logging.debug(f"User Input: {user_input}")
     
     # Process the message
     manager._process_received_message(user_input, patient, silent=False)
     
     # Async chat initiation
     async def initiate_chat():
-        await patient.a_initiate_chat(manager, message=user_input)
+        try:
+            await patient.a_initiate_chat(manager, message=user_input)
+        except Exception as e:
+            logging.error(f"Error initiating chat: {e}")
+            st.session_state.chat_history.append({"role": "error", "content": "An error occurred while processing your request."})
     
     # Call the function to initiate chat
     loop.run_until_complete(initiate_chat())
