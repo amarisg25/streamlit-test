@@ -10,6 +10,8 @@ from langchain_openai import ChatOpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain import hub
+from langchain.memory import ConversationBufferMemory
+from langchain import LLMChain, PromptTemplate
 import autogen
 import chromadb
 
@@ -20,8 +22,8 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 load_dotenv()
 env_api_key = os.getenv('OPENAI_API_KEY')
 
-
 chromadb.api.client.SharedSystemClient.clear_system_cache()
+
 # Streamlit Sidebar for Configuration
 with st.sidebar:
     st.header("OpenAI Configuration")
@@ -43,6 +45,10 @@ api_key = user_api_key
 if not api_key:
     st.warning('Please provide a valid OpenAI API key in the sidebar.', icon="⚠️")
     st.stop()
+
+# Initialize memory
+memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+
 # Function description for LLM
 llm_config = {
     "temperature": 0,
@@ -63,14 +69,25 @@ def check_termination(x):
     x (dict): A dictionary containing the message content
 
     Returns:
-    bool: True if the message ends with "TERMINATE", False otherwise
+    bool: True if the message ends with "TERMINATE", False otherwise.
     """
     return x.get("content", "").rstrip().endswith("TERMINATE")
 
 class TrackableGroupChatManager(autogen.GroupChatManager):
     def _process_received_message(self, message, sender, silent):
+        # Append the message to Streamlit chat history
+        st.session_state.chat_history.append({"role": sender.name, "content": message})
+        
+        # Also append to LangChain memory
+        if sender.name == "user":
+            memory.chat_memory.add_user_message(message)
+        else:
+            memory.chat_memory.add_ai_message(message)
+        
+        # Display the message in Streamlit
         with st.chat_message(sender.name):
-                st.markdown(message)
+            st.markdown(message)
+        
         return super()._process_received_message(message, sender, silent)
 
 # Load documents from a URL
@@ -87,6 +104,21 @@ vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbedd
 
 # Initialize the LLM with the selected model
 llm = ChatOpenAI(model_name=selected_model, temperature=0, openai_api_key=api_key)
+
+# Define a prompt template that includes conversation history
+prompt = PromptTemplate(
+    template="""
+    The following is a conversation between a patient and an HIV PrEP counselor. Use the conversation history to provide relevant and context-aware responses.
+
+    {chat_history}
+
+    Patient: {question}
+    Counselor:""",
+    input_variables=["chat_history", "question"]
+)
+
+# Initialize the LLMChain with the memory
+llm_chain = LLMChain(llm=llm, prompt=prompt, memory=memory)
 
 # Patient (Chatbot-user)
 patient = autogen.UserProxyAgent(
@@ -105,18 +137,18 @@ qa_chain = RetrievalQA.from_chain_type(
 
 def answer_question(question: str) -> str:
     """
-    Answer a question based on HIV PrEP knowledge base.
+    Answer a question based on HIV PrEP knowledge base, utilizing conversation history.
 
     :param question: The question to answer.
     :return: The answer as a string.
     """
-    result = qa_chain.invoke({"query": question})
-    return result.get("result", "I'm sorry, I couldn't find an answer to that question.")
+    response = llm_chain.run(question=question)
+    return response
 
 # Main counselor - answers general questions 
 counselor = autogen.UserProxyAgent(
     name="counselor",
-    system_message="You are an HIV PrEP counselor. Call the function provided to answer user's questions.",
+    system_message="You are an HIV PrEP counselor. Use the conversation history to answer user's questions concisely.",
     is_termination_msg=lambda x: check_termination(x),
     human_input_mode="NEVER",
     code_execution_config={"work_dir": "coding", "use_docker": False},
@@ -127,7 +159,7 @@ counselor = autogen.UserProxyAgent(
 FAQ_agent = autogen.AssistantAgent(
     name="suggests_retrieve_function",
     is_termination_msg=lambda x: check_termination(x),
-    system_message="Suggests function to use to answer HIV/PrEP counselling questions",
+    system_message="Suggests function to use to answer HIV/PrEP counselling questions.",
     human_input_mode="NEVER",
     code_execution_config={"work_dir": "coding", "use_docker": False},
     llm_config=llm_config
@@ -138,12 +170,15 @@ autogen.agentchat.register_function(
     caller=FAQ_agent,
     executor=counselor,
     name="answer_question",
-    description="Retrieves embedding data content to answer user's question.",
+    description="Retrieves embedding data content to answer user's question, utilizing conversation history.",
 )
 
+# Initialize event loop once
+if 'loop' not in st.session_state:
+    st.session_state.loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(st.session_state.loop)
 
-loop = asyncio.new_event_loop()
-asyncio.set_event_loop(loop)
+loop = st.session_state.loop
 
 # INITIALIZE THE GROUP CHAT
 group_chat = autogen.GroupChat(
@@ -159,6 +194,8 @@ manager = TrackableGroupChatManager(
 
 # Streamlit user input for chatbot interaction
 st.title("HIV PrEP Counseling Chatbot")
+
+# Initialize chat history in session state
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 
@@ -173,17 +210,17 @@ user_input = st.text_input("You: ", "")
 if user_input:
     # Append user input to chat history
     st.session_state.chat_history.append({"role": "user", "content": user_input})
-
+    
     # Process the message
     manager._process_received_message(user_input, patient, silent=False)
-
+    
     # Async chat initiation
     async def initiate_chat():
         await patient.a_initiate_chat(manager, message=user_input)
-
+    
     # Call the function to initiate chat
     loop.run_until_complete(initiate_chat())
-
+    
     # Display the updated chat history
     for chat in st.session_state.chat_history:
         with st.chat_message(chat['role']):
