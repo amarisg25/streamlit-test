@@ -195,7 +195,7 @@ with st.container():
             llm_config=config_list, 
             system_message="When asked a question about HIV/PREP, always call the FAQ agent before to help the counselor answer. Then have the counselor answer the question concisely using the retrieved information."
         )
-        manager._process_received_message(user_input, patient)
+        manager._process_received_message(user_input, patient, True)
         # Define an asynchronous function
         async def initiate_chat():
             await patient.a_initiate_chat(
