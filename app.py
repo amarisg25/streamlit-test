@@ -197,8 +197,8 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY')
 
-if not api_key:
-    raise ValueError("API key not found. Please set OPENAI_API_KEY in your .env file.")
+# if not api_key:
+#     raise ValueError("API key not found. Please set OPENAI_API_KEY in your .env file.")
 
 # Streamlit Sidebar
 st.sidebar.header("Configuration")
