@@ -191,8 +191,6 @@ counselor = autogen.UserProxyAgent(
     code_execution_config={"work_dir": "coding", "use_docker": False},
     llm_config=llm_config
 )
-
-# FAQ agent - provides context for the counselor
 FAQ_agent = autogen.AssistantAgent(
     name="suggests_retrieve_function",
     is_termination_msg=lambda x: check_termination(x),
@@ -201,24 +199,7 @@ FAQ_agent = autogen.AssistantAgent(
     code_execution_config={"work_dir": "coding", "use_docker": False},
     llm_config=llm_config
 )
-
-# Register the answer_question function with autogen
-autogen.agentchat.register_function(
-    answer_question,
-    caller=FAQ_agent,
-    executor=counselor,
-    name="answer_question",
-    description="Retrieves embedding data content to answer user's question, utilizing conversation history.",
-)
-
-# Initialize event loop once
-if 'loop' not in st.session_state:
-    st.session_state.loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(st.session_state.loop)
-
-loop = st.session_state.loop
-
-# INITIALIZE THE GROUP CHAT
+# Initialize the group chat
 group_chat = autogen.GroupChat(
     agents=[counselor, FAQ_agent, patient],
     messages=[],
@@ -243,30 +224,31 @@ for chat in st.session_state.chat_history:
         st.markdown(chat['content'])
 
 # User input field
-# Streamlit user input field
 user_input = st.text_input("You: ", "")
 
 if user_input:
     # Append user input to chat history
     st.session_state.chat_history.append({"role": "user", "content": user_input})
     logging.debug(f"User Input: {user_input}")
-    
-    # Process the message
-    manager._process_received_message(user_input, patient, silent=False)
-    
-    # Define async chat initiation function
+
+    # Prepare to resume the chat and send the new message from the user
+    last_agent, = manager.resume(messages=st.session_state.chat_history)
+
+    # NEW MESSAGE FROM USER
+    last_message = user_input
+
+    # Resume the chat using the last agent and message
     async def initiate_chat():
         try:
-            await patient.a_initiate_chat(manager, message=user_input)
+            await last_agent.initiate_chat(recipient=manager, message=last_message, clear_history=False)
         except Exception as e:
             logging.error(f"Error initiating chat: {e}")
             st.session_state.chat_history.append({"role": "error", "content": "An error occurred while processing your request."})
-    
-    # Create an asyncio task instead of using run_until_complete
+
+    # Schedule the coroutine to run
     asyncio.create_task(initiate_chat())
-    
+
     # Display the updated chat history
     for chat in st.session_state.chat_history:
         with st.chat_message(chat['role']):
             st.markdown(chat['content'])
-
