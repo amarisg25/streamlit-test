@@ -112,7 +112,7 @@ class TrackableGroupChatManager(autogen.GroupChatManager):
         super().__init__(groupchat=groupchat, llm_config=llm_config, system_message=system_message)
         self.messages = []  # To track all messages in the group chat
 
-    def _process_received_message(self, message, sender):
+    def _process_received_message(self, message, sender, silent):
         # Track the message for display
         self.messages.append((sender.name, message))
 
@@ -121,7 +121,7 @@ class TrackableGroupChatManager(autogen.GroupChatManager):
             st.markdown(message)
 
         # Process the message using the parent class method
-        super()._process_received_message(message, sender)
+        super()._process_received_message(message, sender, silent)
 
 # Streamlit Container for Chat
 with st.container():
@@ -195,7 +195,7 @@ with st.container():
             llm_config=config_list, 
             system_message="When asked a question about HIV/PREP, always call the FAQ agent before to help the counselor answer. Then have the counselor answer the question concisely using the retrieved information."
         )
-        manager._process_received_message(user_input, patient, True)
+        manager._process_received_message(user_input, patient)
         # Define an asynchronous function
         async def initiate_chat():
             await patient.a_initiate_chat(
