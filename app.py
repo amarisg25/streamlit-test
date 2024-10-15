@@ -30,12 +30,13 @@ with st.sidebar:
     user_api_key = st.text_input(
         "API Key", 
         type="password", 
-        value=env_api_key if env_api_key else "",
+        # value=env_api_key if env_api_key else "",
         key="api_key_input"  # Optional: Add a unique key
     )
 
 # Determine which API key to use
-api_key = user_api_key if user_api_key else env_api_key
+api_key = user_api_key 
+# if user_api_key else env_api_key
 
 if not api_key:
     st.warning('Please provide a valid OpenAI API key in the sidebar.', icon="⚠️")
@@ -52,17 +53,18 @@ def initialize_vectorstore(api_key):
     all_splits = text_splitter.split_documents(data)
     st.write(f"Number of splits: {len(all_splits)}")
     
+    print(api_key)
     # Initialize the vector store
     return Chroma.from_documents(
         documents=all_splits, 
-        embedding=OpenAIEmbeddings(model="text-embedding-3-large", api_key=api_key)
+        embedding=OpenAIEmbeddings(model="text-embedding-3-large", openai_api_key=api_key)
     )
 
 # Initialize the vector store
 vectorstore = initialize_vectorstore(api_key)
 
 # Initialize the LLM with the selected model
-llm = ChatOpenAI(model_name=selected_model, temperature=0)
+llm = ChatOpenAI(model_name=selected_model, temperature=0, openai_api_key=api_key)
 
 # Initialize RetrievalQA
 prompt = hub.pull("rlm/rag-prompt", api_url="https://api.hub.langchain.com")
