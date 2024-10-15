@@ -172,7 +172,7 @@ user_input = st.text_input("You: ", "")
 
 if user_input:
     # Append user input to chat history
-    # st.session_state.chat_history.append({"role": "user", "content": user_input})
+    st.session_state.chat_history.append({"role": "user", "content": user_input})
 
     # Process the message
     manager._process_received_message(user_input, patient, silent=False)
