@@ -31,15 +31,14 @@ class TrackableUserProxyAgent(UserProxyAgent):
             st.markdown(message)
         return super()._process_received_message(message, sender, silent)
     
-
-
 selected_model = None
 selected_key = None
 
-# with st.sidebar:
-#     st.header("OpenAI Configuration")
-#     selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4o-mini'], index=1)
-#     selected_key = st.text_input("API Key", type="password")
+with st.sidebar:
+    st.header("OpenAI Configuration")
+    selected_model = st.selectbox("Model", ['gpt-3.5-turbo', 'gpt-4', 'gpt-4o-mini'], index=1)
+    selected_key = st.text_input("API Key", type="password")
+
 
 
 #  Load documents from a URL
@@ -57,7 +56,7 @@ print(f"Number of splits: {len(all_splits)}")
 #
 # Store splits in the vector store
 print(api_key)
-vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbeddings(model="text-embedding-3-large", api_key=api_key))
+vectorstore = Chroma.from_documents(documents=all_splits, embedding=OpenAIEmbeddings(model="text-embedding-3-large", api_key=selected_key))
 
 # Initialize the LLM with the correct model
 llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
